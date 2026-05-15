@@ -1,12 +1,15 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { sendEmail } from "@/lib/mailer";
+import logger from "@/lib/logger";
 
 export async function POST(req) {
   try {
     const { email } = await req.json();
+    logger.info(`Password reset requested for email: ${email}`);
 
     if (!email) {
+      logger.warn("Password reset attempt with missing email");
       return NextResponse.json(
         { message: "Email is required" },
         { status: 400 }
@@ -18,6 +21,7 @@ export async function POST(req) {
     });
 
     if (!user) {
+      logger.warn(`password reset attempt for non-existent email: ${email}`);
       return NextResponse.json(
         { message: "User not found" },
         { status: 404 }
@@ -51,6 +55,8 @@ export async function POST(req) {
     );
 
     return NextResponse.json({
+      logger: logger,
+      info: `OTP sent to email: ${email}`,
       message: "OTP sent to your email",
     });
 

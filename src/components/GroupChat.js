@@ -591,7 +591,7 @@ export default function GroupChat({ currentUserId, onLogout }) {
 //   useEffect(() => {
 //     if (!currentUserId) return;
     
-//     // ✅ Dynamic URL - current browser ke hostname ko use karega
+//     // Dynamic URL - current browser ke hostname ko use karega
 //     const socketUrl = `http://${window.location.hostname}:3001`;
 //     console.log("🔌 Connecting to socket server:", socketUrl);
     

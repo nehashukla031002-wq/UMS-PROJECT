@@ -1,15 +1,18 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
+import logger from "@/lib/logger";
 
 
 export async function POST(req) {
+
   try {
     // body se data lena
     const { name, email, password } = await req.json();
 
     // Empty field validation
     if (!name || !email || !password) {
+      logger.warn("Registration attempts with missing fields");
       return NextResponse.json(
         {
           message: "All fields are required",
@@ -22,7 +25,9 @@ export async function POST(req) {
 
     // Name validation
     if (name.length < 3) {
+      logger.warn("Registration attempts with short name");
       return NextResponse.json(
+        
         {
           message: "Name must be at least 3 characters",
         },
@@ -37,6 +42,7 @@ export async function POST(req) {
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(email)) {
+      logger.warn("Registration attempts with invalid email format");
       return NextResponse.json(
         {
           message: "Invalid email format",
@@ -49,6 +55,7 @@ export async function POST(req) {
 
     // Password validation
     if (password.length < 6) {
+      logger.warn("Registration attempts with short password");
       return NextResponse.json(
         {
           message:
@@ -68,6 +75,7 @@ export async function POST(req) {
     });
 
     if (existingUser) {
+      logger.warn("Registration attempts with existing email");
       return NextResponse.json(
         {
           message: "User already exists",

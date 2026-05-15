@@ -2,13 +2,21 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
+import logger from "@/lib/logger";
+
 
 export async function POST(req) {
   try {
     const { email, password } = await req.json();
 
+    logger.info(`Login attempt for email: ${email}`);
+
     // Empty fields validation
     if (!email || !password) {
+      logger.warn(`Login failed - Missing fields for email: ${email}`);
+      logger.error(`Login failed - Missing fields for email: ${email}`);
+
+
       return NextResponse.json(
         { message: "Email and Password are required" },
         { status: 400 }
@@ -40,7 +48,11 @@ export async function POST(req) {
     });
 
     if (!user) {
+      logger.warn(`Login failed - User not found for emails: ${email}`);
+      logger.error(`Login failed - User not found for email: ${email}`);
+      
       return NextResponse.json(
+
         { message: "User not found" },
         { status: 404 }
       );
@@ -48,6 +60,8 @@ export async function POST(req) {
 
     //5. Status check 
     if (user.status === "BLOCKED") {
+      logger.warn(`Login failed - Account blocked for emails: ${email}`);
+      logger.error(`Login failed - Account blocked for emails: ${email}`);
       return NextResponse.json(
         { message: "Account is blocked by admin" },
         { status: 403 }
@@ -55,6 +69,8 @@ export async function POST(req) {
     }
 
     if (user.status === "SUSPENDED") {
+      logger.warn(`Login failed - Account suspended for emails: ${email}`);
+      logger.error(`Login failed - Account suspended for emails: ${email}`);
       return NextResponse.json(
         { message: "Account is suspended" },
         { status: 403 }
@@ -68,6 +84,8 @@ export async function POST(req) {
     );
 
     if (!isPasswordCorrect) {
+      logger.warn(`Login failed - Incorrect password for email: ${email}`);
+      logger.error(`Login failed - Incorrect password for email: ${email}`);
       return NextResponse.json(
         { message: "Invalid credentials" },
         { status: 401 }
@@ -89,7 +107,9 @@ export async function POST(req) {
 
     //Response + Cookie
     const response = NextResponse.json(
+
       {
+
         message: "Login successful",
         user,
       },

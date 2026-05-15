@@ -4,10 +4,12 @@ import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 
 export async function PUT(req) {
+  logger.info("Password change attempt");
   try {
     const token = req.cookies.get("token")?.value;
 
     if (!token) {
+      logger.warn("Unauthorized password change attempt - no token");
       return NextResponse.json(
         { message: "Unauthorized - No Token" },
         { status: 401 }
@@ -23,6 +25,7 @@ export async function PUT(req) {
       await req.json();
 
     if (!oldPassword || !newPassword) {
+      logger.warn("Password change attempt with missing fields");
       return NextResponse.json(
         { message: "All fields are required" },
         { status: 400 }
@@ -41,6 +44,7 @@ export async function PUT(req) {
     );
 
     if (!isMatch) {
+      logger.warn(`password change attempt with incorrect old password for user ID: ${decoded.id}`);  
       return NextResponse.json(
         { message: "Old password is incorrect" },
         { status: 400 }
@@ -62,6 +66,7 @@ export async function PUT(req) {
     });
 
     return NextResponse.json(
+
       {
         message: "Password changed successfully",
       },

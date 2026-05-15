@@ -16,7 +16,7 @@ function getUserId(req) {
 // POST - Add member to group
 export async function POST(req, { params }) {
   try {
-    const { groupId } = await params;  // 🔥 FIX: await params
+    const { groupId } = await params;  //  FIX: await params
     const { userId } = await req.json();
     const currentUserId = getUserId(req);
     
@@ -74,7 +74,7 @@ export async function POST(req, { params }) {
 // DELETE - Remove member from group (EXIT GROUP)
 export async function DELETE(req, { params }) {
   try {
-    const { groupId } = await params;  // 🔥 FIX: await params
+    const { groupId } = await params;  //  FIX: await params
     const { userId } = await req.json();
     const currentUserId = getUserId(req);
     
@@ -117,7 +117,7 @@ export async function DELETE(req, { params }) {
       }
     });
     
-    console.log(`✅ User ${userId} removed from group ${groupId}`);
+    console.log(` User ${userId} removed from group ${groupId}`);
     
     return NextResponse.json({ success: true, message: "Member removed" });
     
